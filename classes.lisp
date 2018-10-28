@@ -1,3 +1,5 @@
+(in-package :epub)
+
 (defclass Section ()
   ((index
     :initarg :index

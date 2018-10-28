@@ -1,4 +1,4 @@
-;; (in-package :html-gen)
+(in-package :epub)
 
 ;; The void elements according to
 ;; http://www.w3.org/TR/html-markup/syntax.html#void-element

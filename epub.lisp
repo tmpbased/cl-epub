@@ -1,4 +1,4 @@
-;; (in-package :epub)
+(in-package :epub)
 
 (defparameter *book-name* nil)
 (defparameter *book-title* nil)
@@ -45,31 +45,31 @@ stream, path, args and body works as with with-open-file."
 						  :direction :output
 						  :if-exists :supersede)
     (generate-xml
-     (stream)
-     (xml-declaration (:version "1.0") (:encoding "UTF-8"))
-     (:html
-      ((:xmlns "http://www.w3.org/1999/xhtml")
-       (:xml:lang "en")
-       (:lang "en")
-       (:xmlns:epub "http://www.idpf.org/2007/ops"))
-      (:head ()
-	     (:meta ((:charset "utf-8")))
-	     (:title () *book-title*)
-	     (:link ((:rel "stylesheet")
-		     (:type "text/css")
-		     (:href "css.css"))))
-      (:body ()
-	     (dolist (s (sort *sections*
-			      #'(lambda (s1 s2)
-				  (let ((i1 (section-id s1))
-					(i2 (section-id s2)))
-				    (if (or (not (integerp i1))
-					    (not (integerp i2)))
-					(error
-					 "~s and ~s should have integer id's"
-					 s1 s2))
-				    (< i1 i2)))))
-	       (format stream (section-to-html s))))))))
+	(stream)
+	(xml-declaration (:version "1.0") (:encoding "UTF-8"))
+	(:html
+	 ((:xmlns "http://www.w3.org/1999/xhtml")
+	  (:|xml:lang| "en")
+	  (:lang "en")
+	  (:|xmlns:epub| "http://www.idpf.org/2007/ops"))
+	 (:head ()
+		(:meta ((:charset "utf-8")))
+		(:title () *book-title*)
+		(:link ((:rel "stylesheet")
+			(:type "text/css")
+			(:href "css.css"))))
+	 (:body ()
+		(dolist (s (sort *sections*
+				 #'(lambda (s1 s2)
+				     (let ((i1 (section-id s1))
+					   (i2 (section-id s2)))
+				       (if (or (not (integerp i1))
+					       (not (integerp i2)))
+					   (error
+					    "~s and ~s should have integer id's"
+					    s1 s2))
+				       (< i1 i2)))))
+		  (format stream (section-to-html s))))))))
 
 (defun write-package-document (metadata manifest spine
 			       &optional (guide "")  (bindings ""))
@@ -91,13 +91,14 @@ the EPUB standard optional. The package document file name should end in .opf."
 			    (if guide guide)
 			    (if bindings bindings)))))
 
-(defun make-keyword (name)
-  (values (intern (string name) :keyword)))
+(eval-when (:compile-toplevel :execute :load-toplevel)
+  (defun make-keyword (name)
+    (values (intern (string name) :keyword))))
 
 (defmacro metadata-expander (element stream &optional add-dc)
   `(if ,element (format ,stream (xml (,(make-keyword
-				     (format nil "~:[~;dc:~]~a" add-dc element))
-				       () ,element)))))
+					(format nil "~:[~;dc:~]~a" add-dc element))
+				      () ,element)))))
 
 (defmacro metadata-expander-collector (&rest forms)
   `(progn
@@ -113,33 +114,33 @@ this function. Please see
 for more information on the metadata element and its content."
   (with-output-to-string (stream)
     (generate-xml
-     (stream)
-     (:metadata
-      ()
-      ;; these are required
-      (generate-xml (stream)
-		    (:dc:identifier ((:id "uid")) identifier)
-		    (:meta ((:property "dcterms:modified")) modified-timestamp))
-      (metadata-expander-collector
-       ;; these two are also required
-       (title stream t)
-       (language stream t)
+	(stream)
+	(:metadata
+	 ()
+	 ;; these are required
+	 (generate-xml (stream)
+		       (:|dc:identifier| ((:id "uid")) identifier)
+		       (:meta ((:property "dcterms:modified")) modified-timestamp))
+	 (metadata-expander-collector
+	  ;; these two are also required
+	  (title stream t)
+	  (language stream t)
 
-       ;; these are optional
-       (meta stream)
-       (link stream)
-       (contributor stream t)
-       (coverage stream t)
-       (creator stream t)
-       (date stream t)
-       (description stream t)
-       (format stream t)
-       (publisher stream t)
-       (relation stream t)
-       (rights stream t)
-       (source stream t)
-       (object stream t)
-       (type stream t))))))
+	  ;; these are optional
+	  (meta stream)
+	  (link stream)
+	  (contributor stream t)
+	  (coverage stream t)
+	  (creator stream t)
+	  (date stream t)
+	  (description stream t)
+	  (format stream t)
+	  (publisher stream t)
+	  (relation stream t)
+	  (rights stream t)
+	  (source stream t)
+	  (object stream t)
+	  (type stream t))))))
 
 (defun create-item (id href media-type &key fallback properties media-overlay)
   "Please see (somewhere) for information on the <item> element."
@@ -210,7 +211,7 @@ Else nil."
 				:id ,id
 				:add-to-toc ,add-to-toc
 				:paragraphs ',paragraphs)))
-       (push ,sec *sections*)))))
+       (push ,sec *sections*))))
 
 (defgeneric section-to-html (Section))
 (defmethod section-to-html ((s Section))

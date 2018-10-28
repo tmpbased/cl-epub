@@ -27,3 +27,5 @@ package-document.opf
 .#howto.md
 
 .#complete-example.lisp
+
+*.fasl

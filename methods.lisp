@@ -1,3 +1,5 @@
+(in-package :epub)
+
 (defgeneric add-section (Epub Section)
   (:documentation "Add the section to the epub book. The section's index
 specifies where in the reading order the section is to be put."))
@@ -68,48 +70,48 @@ in order, the one that should be read first is to be added first."))
 specified."))
   (with-output-to-string (str)
     (generate-xml
-     (str)
-     (:metadata ()
-		;; the four obligatory elements
-		(:dc:identifier () (metadata-identifier m))
-		(:dc:title () (metadata-title m))
-		(:dc:language () (metadata-language m))
-		(:meta ((:property "dcterms:modified"))
-		       (metadata-modified-timestamp m))
+	(str)
+	(:metadata ()
+		   ;; the four obligatory elements
+		   (:|dc:identifier| () (metadata-identifier m))
+		   (:|dc:title| () (metadata-title m))
+		   (:|dc:language| () (metadata-language m))
+		   (:meta ((:property "dcterms:modified"))
+			  (metadata-modified-timestamp m))
 
-		;; the optional elements
-		(if (metadata-meta m)
-		    (format str (xml (:meta () (metadata-meta m)))))
-		(if (metadata-link m)
-		    (format str (xml (:link () (metadata-link m)))))
-		(if (metadata-contributor m)
-		    (format str (xml (:dc:contributor
-				      () (metadata-contributor m)))))
-		(if (metadata-coverage m)
-		    (format str (xml (:dc:coverage () (metadata-coverage m)))))
-		(if (metadata-creator m)
-		    (format str (xml (:dc:creator () (metadata-creator m)))))
-		(if (metadata-date m)
-		    (format str (xml (:dc:date () (metadata-date m)))))
-		(if (metadata-description m)
-		    (format str
-			    (xml (:dc:description
-				  () (metadata-description m)))))
-		(if (metadata-format m)
-		    (format str (xml (:dc:format () (metadata-format m)))))
-		(if (metadata-publisher m)
-		    (format str (xml (:dc:publisher
-				      () (metadata-publisher m)))))
-		(if (metadata-relation m)
-		    (format str (xml (:dc:relation () (metadata-relation m)))))
-		(if (metadata-rights m)
-		    (format str (xml (:dc:rights () (metadata-rights m)))))
-		(if (metadata-source m)
-		    (format str (xml (:dc:source () (metadata-source m)))))
-		(if (metadata-subject m)
-		    (format str (xml (:dc:subject () (metadata-subject m)))))
-		(if (metadata-type m)
-		    (format str (xml (:dc:type () (metadata-type m)))))))))
+		   ;; the optional elements
+		   (if (metadata-meta m)
+		       (format str (xml (:meta () (metadata-meta m)))))
+		   (if (metadata-link m)
+		       (format str (xml (:link () (metadata-link m)))))
+		   (if (metadata-contributor m)
+		       (format str (xml (:|dc:contributor|
+					  () (metadata-contributor m)))))
+		   (if (metadata-coverage m)
+		       (format str (xml (:|dc:coverage| () (metadata-coverage m)))))
+		   (if (metadata-creator m)
+		       (format str (xml (:|dc:creator| () (metadata-creator m)))))
+		   (if (metadata-date m)
+		       (format str (xml (:|dc:date| () (metadata-date m)))))
+		   (if (metadata-description m)
+		       (format str
+			       (xml (:|dc:description|
+				      () (metadata-description m)))))
+		   (if (metadata-format m)
+		       (format str (xml (:|dc:format| () (metadata-format m)))))
+		   (if (metadata-publisher m)
+		       (format str (xml (:|dc:publisher|
+					  () (metadata-publisher m)))))
+		   (if (metadata-relation m)
+		       (format str (xml (:|dc:relation| () (metadata-relation m)))))
+		   (if (metadata-rights m)
+		       (format str (xml (:|dc:rights| () (metadata-rights m)))))
+		   (if (metadata-source m)
+		       (format str (xml (:|dc:source| () (metadata-source m)))))
+		   (if (metadata-subject m)
+		       (format str (xml (:|dc:subject| () (metadata-subject m)))))
+		   (if (metadata-type m)
+		       (format str (xml (:|dc:type| () (metadata-type m)))))))))
 
 (defgeneric get-ordered-paragraphs (Section)
   (:documentation "Get the paragraphs, from the section, sorted according to the
@@ -201,19 +203,19 @@ index."))
   (ensure-directories-exist p)
   (with-open-file (stream p :direction :output :if-exists :supersede)
     (generate-xml
-     (stream)
-     (xml-declaration (:version "1.0") (:encoding "UTF-8"))
-     (:html ((:xmlns "http://www.w3.org/1999/xhtml")
-	     (:xmlns:epub "http://www.idpf.org/2007/ops"))
-	    (:head ()
-		   (:meta ((:charset "utf-8")))
-		   (:title () (metadata-title (epub-metadata e)))
-		   (if css (format stream (xml (:link ((:rel "stylesheet")
-						       (:href css)))))))
-	    (:body ()
-		   (loop
-		      for section in (get-ordered-sections e)
-		      do (format stream (serialize-to-html section))))))))
+	(stream)
+	(xml-declaration (:version "1.0") (:encoding "UTF-8"))
+	(:html ((:xmlns "http://www.w3.org/1999/xhtml")
+		(:|xmlns:epub| "http://www.idpf.org/2007/ops"))
+	       (:head ()
+		      (:meta ((:charset "utf-8")))
+		      (:title () (metadata-title (epub-metadata e)))
+		      (if css (format stream (xml (:link ((:rel "stylesheet")
+							  (:href css)))))))
+	       (:body ()
+		      (loop
+			for section in (get-ordered-sections e)
+			do (format stream (serialize-to-html section))))))))
 
 (defgeneric write-nav (Epub p &optional css)
   (:documentation "Write the navigation document to p"))
@@ -222,29 +224,29 @@ index."))
   (with-open-file (stream p :direction :output :if-exists :supersede)
     (let ((sections (get-ordered-sections e)))
       (generate-xml
-       (stream)
-       (xml-declaration (:version "1.0") (:encoding "UTF-8"))
-       (:html
-	((:xmlns "http://www.w3.org/1999/xhtml")
-	 (:xmlns:epub "http://www.idpf.org/2007/ops"))
-	(:head ()
-	       (:meta ((:charset "utf-8")))
-	       (if css (format stream (xml (:link ((:rel "stylesheet")
-						   (:href css)))))))
-	(:body
-	 ()
-	 (:nav
-	  ((:epub:type "toc") (:id "toc"))
-	  (:ol
-	   ()
-	   (loop
-	      for section in sections
-	      if (section-add-to-toc-p section)
-	      do (let ((title (section-title section)))
-		   (if (string= "" title)
-		       (error
-			"A title of a section must not be the empty string.")
-		       (format stream (xml (:li () title))))))))))))))
+	  (stream)
+	  (xml-declaration (:version "1.0") (:encoding "UTF-8"))
+	  (:html
+	   ((:xmlns "http://www.w3.org/1999/xhtml")
+	    (:|xmlns:epub| "http://www.idpf.org/2007/ops"))
+	   (:head ()
+		  (:meta ((:charset "utf-8")))
+		  (if css (format stream (xml (:link ((:rel "stylesheet")
+						      (:href css)))))))
+	   (:body
+	    ()
+	    (:nav
+	     ((:|epub:type| "toc") (:id "toc"))
+	     (:ol
+	      ()
+	      (loop
+		for section in sections
+		if (section-add-to-toc-p section)
+		  do (let ((title (section-title section)))
+		       (if (string= "" title)
+			   (error
+			    "A title of a section must not be the empty string.")
+			   (format stream (xml (:li () title))))))))))))))
 
 (defgeneric write-epub (Epub path)
   (:documentation "Write the epub book to the folder pointed to by path. path
