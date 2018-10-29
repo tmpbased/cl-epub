@@ -5,11 +5,12 @@
   :author "Your Name <your.name@example.com>"
   :license "Specify license here"
   :serial t
-  :depends-on ()
+  :depends-on (alexandria)
   :components
   ((:file "packages")
    (:file "html-gen")
    (:file "epub")
    (:file "classes")
-   (:file "methods")))
+   (:file "methods"))
+  :in-order-to ((test-op (test-op "cl-epub-test"))))
 

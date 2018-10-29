@@ -1,4 +1,4 @@
-(in-package :epub)
+(in-package :html-gen)
 
 ;; The void elements according to
 ;; http://www.w3.org/TR/html-markup/syntax.html#void-element
@@ -18,13 +18,6 @@
                    (rec rest (cons (subseq source 0 n) acc))
                    (nreverse (cons source acc))))))
     (if source (rec source nil) nil)))
-
-(defmacro with-gensyms ((&rest names) &body body)
-  "The with-gensyms macro, derived from Practical Common Lisp."
-  `(let ,(loop
-	    for n in names
-	    collect `(,n  (gensym (format nil "~a-" (string ',n)))))
-     ,@body))
 
 (defun html-statement-p (form)
   "Return t if form is a list and begins with a keyword and the second value is

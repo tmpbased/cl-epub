@@ -1,4 +1,4 @@
-(in-package :epub)
+(in-package :html-gen)
 
 (defclass Section ()
   ((index

@@ -1,4 +1,4 @@
-(in-package :epub)
+(in-package :html-gen)
 
 (defgeneric add-section (Epub Section)
   (:documentation "Add the section to the epub book. The section's index

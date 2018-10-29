@@ -91,10 +91,6 @@ the EPUB standard optional. The package document file name should end in .opf."
 			    (if guide guide)
 			    (if bindings bindings)))))
 
-(eval-when (:compile-toplevel :execute :load-toplevel)
-  (defun make-keyword (name)
-    (values (intern (string name) :keyword))))
-
 (defmacro metadata-expander (element stream &optional add-dc)
   `(if ,element (format ,stream (xml (,(make-keyword
 					(format nil "~:[~;dc:~]~a" add-dc element))
@@ -174,7 +170,7 @@ return the manifest."
 		  (:spine ()
 			  (loop for i in itemrefs do (format stream i))))))
 
-(defun create-itemrref (idref &key linear id properties)
+(defun create-itemref (idref &key linear id properties)
   "Create an <itemref> tag. idref should, via idref, point to an <item> tag in
 the manifest."
   (with-output-to-string (str)

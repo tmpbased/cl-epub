@@ -1,37 +1,39 @@
+(in-package :html-gen)
+
 (deftest t-html-statement-p ()
   (check
-   ;; this should work
-   (equal t (html-statement-p '(:p () "foo")))
+    ;; this should work
+    (equal t (html-statement-p '(:p () "foo")))
 
-   ;; and this
-   (equal t (html-statement-p '(:a ((:href "foo")) "bar")))
+    ;; and this
+    (equal t (html-statement-p '(:a ((:href "foo")) "bar")))
 
-   ;; check something that is not a list
-   (equal nil (html-statement-p '"foo"))
+    ;; check something that is not a list
+    (equal nil (html-statement-p '"foo"))
 
-   ;; check with args not a list
-   (equal nil (html-statement-p '(:p "foo" "bar")))
+    ;; check with args not a list
+    (equal nil (html-statement-p '(:p "foo" "bar")))
 
-   ;; check with not a keyword
-   (equal nil (html-statement-p '(format nil "foo")))))
+    ;; check with not a keyword
+    (equal nil (html-statement-p '(format nil "foo")))))
 
 (deftest t-create-attributes-string ()
   (check
     ;; test with the empty list
-    (string= "" (create-attributes-string ()))
+    (string= "" (html-gen::create-attributes-string ()))
 
     ;; test with one attribute
-    (string= " foo=\"bar\"" (create-attributes-string ((:foo "bar"))))
+    (string= " foo=\"bar\"" (html-gen::create-attributes-string ((:foo "bar"))))
 
     ;; test with two attributes
     (string= " foo=\"bar\" monkey=\"banana\""
-	     (create-attributes-string ((:foo "bar") (:monkey "banana"))))
+	     (html-gen::create-attributes-string ((:foo "bar") (:monkey "banana"))))
 
     ;; test with bound variables
     (let ((foo "bar")
 	  (monkey "banana"))
       (string= " foo=\"bar\" monkey=\"banana\""
-	       (create-attributes-string ((:foo foo) (:monkey monkey)))))))
+	       (html-gen::create-attributes-string ((:foo foo) (:monkey monkey)))))))
 
 (deftest t-void-element-p ()
   (check

@@ -1,3 +1,5 @@
+(in-package :html-gen)
+
 (deftest t-section ()
   (let ((s (make-instance 'Section
 			  :index 0

@@ -1,7 +1,14 @@
+(defpackage :test
+  (:use :common-lisp :alexandria)
+  (:export
+   :check
+   :deftest))
+
 (defpackage :html-gen
   (:use
    :common-lisp
-   :alexandria)
+   :alexandria
+   :test)
   (:export
    :html
    :xml
@@ -12,8 +19,9 @@
 (defpackage :epub
   (:use
    :common-lisp
+   :alexandria
    :html-gen
-   :alexandria)
+   :test)
   (:export
    :write-mimetype
    :write-container-xml
