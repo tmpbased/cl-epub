@@ -12,5 +12,5 @@
    (:file "epub")
    (:file "classes")
    (:file "methods"))
-  :in-order-to ((test-op (test-op "cl-epub-test"))))
+  :in-order-to ((asdf:test-op (asdf:test-op :cl-epub-test))))
 

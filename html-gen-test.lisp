@@ -1,39 +1,52 @@
-(in-package :html-gen)
+(in-package :test)
 
-(deftest t-html-statement-p ()
-  (check
+(define-test html-gen-suite)
+
+(defmacro with-symbols-from ((package-name &rest symbols) &body body)
+  (let ((f-symbols (loop :for s :in symbols :collect 
+					    (intern (symbol-name s) package-name))))
+    `(progn
+       ,@(loop :for symbol :in symbols :for f-symbol :in f-symbols 
+	       :with body = body
+	       :do (setf body (subst f-symbol symbol body :test #'eq))
+	       :finally (return body)))))
+
+(define-test t-html-statement-p
+  :parent html-gen-suite
+  (with-symbols-from (:html-gen html-statement-p)
     ;; this should work
-    (equal t (html-statement-p '(:p () "foo")))
+    (true (html-statement-p '(:p () "foo")))
 
     ;; and this
-    (equal t (html-statement-p '(:a ((:href "foo")) "bar")))
+    (true (html-statement-p '(:a ((:href "foo")) "bar")))
 
     ;; check something that is not a list
-    (equal nil (html-statement-p '"foo"))
+    (false (html-statement-p '"foo"))
 
     ;; check with args not a list
-    (equal nil (html-statement-p '(:p "foo" "bar")))
+    (false (html-statement-p '(:p "foo" "bar")))
 
     ;; check with not a keyword
-    (equal nil (html-statement-p '(format nil "foo")))))
+    (false (html-statement-p '(format nil "foo")))))
 
-(deftest t-create-attributes-string ()
-  (check
+(define-test t-create-attributes-string
+  :parent html-gen-suite
+  (with-symbols-from (:html-gen create-attributes-string)
     ;; test with the empty list
-    (string= "" (html-gen::create-attributes-string ()))
+    (is string= "" (create-attributes-string ()))
 
     ;; test with one attribute
-    (string= " foo=\"bar\"" (html-gen::create-attributes-string ((:foo "bar"))))
+    (is string= " foo=\"bar\"" (create-attributes-string ((:foo "bar"))))
 
     ;; test with two attributes
-    (string= " foo=\"bar\" monkey=\"banana\""
-	     (html-gen::create-attributes-string ((:foo "bar") (:monkey "banana"))))
+    (is string= " foo=\"bar\" monkey=\"banana\""
+	(create-attributes-string ((:foo "bar") (:monkey "banana"))))
 
     ;; test with bound variables
     (let ((foo "bar")
 	  (monkey "banana"))
-      (string= " foo=\"bar\" monkey=\"banana\""
-	       (html-gen::create-attributes-string ((:foo foo) (:monkey monkey)))))))
+      (is string= " foo=\"bar\" monkey=\"banana\""
+	  (create-attributes-string ((:foo foo) (:monkey monkey)))))))
 
 (deftest t-void-element-p ()
   (check
@@ -148,8 +161,8 @@
 
 (deftest do-html-gen-tests ()
   (check
-    (t-html-statement-p)
-    (t-create-attributes-string)
+    ;; (t-html-statement-p)
+    ;; (t-create-attributes-string)
     (t-void-element-p)
     (t-html-variable-and-functions)
     (t-generate-html)
