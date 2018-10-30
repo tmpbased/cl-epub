@@ -44,13 +44,13 @@ in order, the one that should be read first is to be added first."))
   (with-output-to-string (str)
     (format str "<itemref idref=\"~a\"" (itemref-idref i))
 
-    ;; linear should be "yes" or "no"
     (let ((linear (itemref-linear i)))
-      (if (not (or (string= "yes" linear)
-		   (string= "no" linear)))
-	  (error "linear should be ~s or ~s in ~s." "yes" "no" i))
-      (format str " linear=\"~a\"" linear))
-
+      (when linear
+	;; linear should be "yes" or "no"
+	(if (not (or (string= "yes" linear)
+		     (string= "no" linear)))
+	    (error "linear should be ~s or ~s in ~s." "yes" "no" i))
+	(format str " linear=\"~a\"" linear)))
     (if (itemref-id i)
 	(format str " id=\"~a\"" (itemref-id i)))
     (if (itemref-properties i)

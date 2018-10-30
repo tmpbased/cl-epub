@@ -216,8 +216,12 @@ Else nil."
     (generate-xml (str)
 		  (:section ((:id (format nil "s~a" (section-id s))))
 			    (loop
-			       for p in (section-paragraphs s)
-			       do (format str "~a" (paragraph-text p)))))))
+			      for p in (section-paragraphs s)
+			      do (format str "~a" (paragraph-text p)))))))
+
+(defgeneric paragraph-text (Paragraph))
+(defmethod paragraph-text ((s string))
+  s)
 
 (defclass Paragraph ()
   ((id

@@ -82,7 +82,7 @@ have <p> tags, ie text is \"<p>lorem lipsum...</p>\"."
     :documentation "The idref attribute of the <itemref> element.")
    (linear
     :initarg :linear
-    :initform "yes"
+    :initform nil
     :reader itemref-linear
     :documentation "The linear attribute of the <itemref> element.")
    (id

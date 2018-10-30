@@ -10,9 +10,8 @@
   ((:file "packages-test")
    (:file "testing")
    (:file "html-gen-test")
-   ;; (:file "epub-test")
-   ;; (:file "classes-test")
-   ;; (:file "methods-test")
-   )
+   (:file "epub-test")
+   (:file "classes-test")
+   (:file "methods-test"))
   :perform (asdf:test-op (op c) (uiop:symbol-call :parachute :test :test)))
 
