@@ -1,3 +1,7 @@
+(defpackage :linked-hash-table
+  (:use #:common-lisp #:queue)
+  (:shadow #:gethash #:remhash))
+
 (defpackage :html-gen
   (:use #:common-lisp
 	#:alexandria)

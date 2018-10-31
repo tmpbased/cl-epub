@@ -7,7 +7,9 @@
   :serial t
   :depends-on (alexandria)
   :components
-  ((:file "packages")
+  ((:file "queue/queue")
+   (:file "packages")
+   (:file "linked-hash-table")
    (:file "html-gen")
    (:file "epub")
    (:file "classes")
