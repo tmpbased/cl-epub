@@ -238,19 +238,21 @@
 			     :id "id"
 			     :href "href"
 			     :media-type "media type"))
-	  (i2 (make-instance 'Item
-			     :id "id2"
-			     :href "href2"
-			     :media-type "media type2"))
+	  ;; (i2 (make-instance 'Item
+	  ;; 		     :id "id2"
+	  ;; 		     :href "href2"
+	  ;; 		     :media-type "media type2"))
 	  (itemref (make-instance 'Itemref :idref "content.xhtml")))
       (add-item-to-manifest epub i1)
-      (add-item-to-manifest epub i2)
+      ;; (add-item-to-manifest epub i2)
       (add-itemref-to-spine epub itemref)
       (setf (epub-metadata epub) metadata)
       (write-package-document epub "package-document.opf")
       (with-open-file (stream "package-document.opf") 
-	(skip "Depends on hash-values iteration order" (is string= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><package xmlns=\"http//www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"uid\"><metadata><dc:identifier>identifier</dc:identifier><dc:title>title</dc:title><dc:language>language</dc:language><meta property=\"dcterms:modified\">today</meta></metadata><manifest><item id=\"id2\" href=\"href2\" media-type=\"media type2\"></item><item id=\"id\" href=\"href\" media-type=\"media type\"></item></manifest><spine toc=\"ncx\"><itemref idref=\"content.xhtml\"></itemref></spine></package>"
-							   (read-line stream)))))))
+	(is string= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><package xmlns=\"http//www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"uid\"><metadata><dc:identifier>identifier</dc:identifier><dc:title>title</dc:title><dc:language>language</dc:language><meta property=\"dcterms:modified\">today</meta></metadata><manifest><item id=\"id\" href=\"href\" media-type=\"media type\"></item></manifest><spine toc=\"ncx\"><itemref idref=\"content.xhtml\"></itemref></spine></package>"
+	    (read-line stream))
+	;; <item id=\"id2\" href=\"href2\" media-type=\"media type2\"></item>
+	))))
 
 (define-test t-write-container-xml
   :parent methods-suite
