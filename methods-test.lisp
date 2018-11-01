@@ -45,7 +45,7 @@
 	  (epub (make-instance 'Epub)))
       (add-item-to-manifest epub item)
       ;; the id of the item is the key, ie "item id"
-      (let ((itm (gethash "item id" (epub-manifest epub)))) 
+      (let ((itm (table-get "item id" (epub-manifest epub)))) 
 	(is string= "item id" (item-id itm))
 	(is string= "my href" (item-href itm))
 	(is string= "text/plain" (item-media-type itm))))))
@@ -193,25 +193,6 @@
       (is string= "<section>p1p2p3</section>"
 	  (serialize-to-html section)))))
 
-
-(define-test t-manifest-to-html
-  :parent methods-suite
-  (with-symbols-from (:html-gen Item Epub add-item-to-manifest)
-    (let ((i1 (make-instance 'Item :id "i1" :href "h1" :media-type "mt1"))
-	  (i2 (make-instance 'Item :id "i2" :href "h2" :media-type "mt2"))
-	  (i3 (make-instance 'Item :id "i3" :href "h3" :media-type "mt3"))
-	  (i4 (make-instance 'Item :id "i4" :href "h4" :media-type "mt4"))
-	  (i5 (make-instance 'Item :id "i5" :href "h5" :media-type "mt5"))
-	  (i6 (make-instance 'Item :id "i6" :href "h6" :media-type "mt6"))
-	  (epub (make-instance 'Epub)))
-      (add-item-to-manifest epub i1)
-      (add-item-to-manifest epub i2)
-      (add-item-to-manifest epub i3)
-      (add-item-to-manifest epub i4)
-      (add-item-to-manifest epub i5)
-      (add-item-to-manifest epub i6)
-      (skip "Not ready yet" (is string= "How to test with the hash table?" "")))))
-
 (define-test t-spine-to-html
   :parent methods-suite
   (with-symbols-from (:html-gen Itemref Epub add-itemref-to-spine spine-to-html)
@@ -238,21 +219,19 @@
 			     :id "id"
 			     :href "href"
 			     :media-type "media type"))
-	  ;; (i2 (make-instance 'Item
-	  ;; 		     :id "id2"
-	  ;; 		     :href "href2"
-	  ;; 		     :media-type "media type2"))
+	  (i2 (make-instance 'Item
+			     :id "id2"
+			     :href "href2"
+			     :media-type "media type2"))
 	  (itemref (make-instance 'Itemref :idref "content.xhtml")))
       (add-item-to-manifest epub i1)
-      ;; (add-item-to-manifest epub i2)
+      (add-item-to-manifest epub i2)
       (add-itemref-to-spine epub itemref)
       (setf (epub-metadata epub) metadata)
       (write-package-document epub "package-document.opf")
       (with-open-file (stream "package-document.opf") 
-	(is string= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><package xmlns=\"http//www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"uid\"><metadata><dc:identifier>identifier</dc:identifier><dc:title>title</dc:title><dc:language>language</dc:language><meta property=\"dcterms:modified\">today</meta></metadata><manifest><item id=\"id\" href=\"href\" media-type=\"media type\"></item></manifest><spine toc=\"ncx\"><itemref idref=\"content.xhtml\"></itemref></spine></package>"
-	    (read-line stream))
-	;; <item id=\"id2\" href=\"href2\" media-type=\"media type2\"></item>
-	))))
+	(is string= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><package xmlns=\"http//www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"uid\"><metadata><dc:identifier>identifier</dc:identifier><dc:title>title</dc:title><dc:language>language</dc:language><meta property=\"dcterms:modified\">today</meta></metadata><manifest><item id=\"id\" href=\"href\" media-type=\"media type\"></item><item id=\"id2\" href=\"href2\" media-type=\"media type2\"></item></manifest><spine toc=\"ncx\"><itemref idref=\"content.xhtml\"></itemref></spine></package>"
+	    (read-line stream))))))
 
 (define-test t-write-container-xml
   :parent methods-suite
