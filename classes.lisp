@@ -207,7 +207,7 @@ for the section is used as key in the hash table.")
    (manifest
     :accessor epub-manifest
     ;; the id of each item is in string form, therefore #'equal must be the test
-    :initform (make-hash-table :test #'equal)
+    :initform (make-linked-table (make-hash-table :test #'equal))
     :documentation "The manifest, to be put in the package document.")
    (spine
     :accessor epub-spine

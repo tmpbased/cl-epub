@@ -17,7 +17,7 @@ paragraph with index 1 will be placed before index 2."))
 (defgeneric add-item-to-manifest (Epub Item)
   (:documentation "Add the Item to the epub's manifest."))
 (defmethod add-item-to-manifest ((e Epub) (i Item))
-  (setf (gethash (item-id i) (epub-manifest e)) i))
+  (setf (table-get (item-id i) (epub-manifest e)) i))
 
 (defgeneric add-itemref-to-spine (Epub Itemref)
   (:documentation "Add the Itemref to the epub's spine. The itemrefs are added
@@ -138,11 +138,10 @@ index."))
 (defmethod manifest-to-html ((e Epub))
   (with-output-to-string (str)
     (generate-xml
-     (str)
-     (:manifest ()
-		(loop
-		   for item being the hash-values in (epub-manifest e)
-		   do (format str (serialize-to-html item)))))))
+	(str)
+	(:manifest ()
+		   (for:for (((key value) over (epub-manifest e)))
+			    (format str (serialize-to-html value)))))))
 
 (defgeneric spine-to-html (Epub)
   (:documentation "Write the spine to html and return a string."))

@@ -12,7 +12,7 @@
       (is = 0 (section-index s))
       (true (section-add-to-toc-p s))
       (is string= "title" (section-title s))
-      (true (hash-table-p (section-paragraphs s))))))
+      (true (table-p (section-paragraphs s))))))
 
 (define-test t-paragraph
   :parent classes-suite
@@ -103,7 +103,7 @@
     (let ((e (make-instance 'Epub
 			    :sections '("these are" "the sections"))))
       (is equal '("these are" "the sections") (epub-sections e))
-      (true (hash-table-p (epub-toc e)))
-      (true (hash-table-p (epub-manifest e)))
+      (true (table-p (epub-toc e)))
+      (true (table-p (epub-manifest e)))
       (of-type Metadata (epub-metadata e))
       (false (epub-spine e)))))
