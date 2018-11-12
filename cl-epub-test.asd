@@ -9,6 +9,7 @@
   :components
   ((:file "packages-test")
    (:file "testing")
+   (:file "linked-table-test")
    (:file "html-gen-test")
    (:file "epub-test")
    (:file "classes-test")

@@ -6,6 +6,7 @@
 	   #:table-remove
 	   #:table-clear
 	   #:table-map
+	   #:table-count
 	   #:table-p))
 
 (defpackage :html-gen
