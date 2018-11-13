@@ -42,14 +42,14 @@ attributes-list should be on the form ((:name \"value\") (:something \"more\"))
  not be used (II)."
   (with-gensyms (str)
     `(with-output-to-string (,str)
-       ,@(loop
-	    for pair in attributes-list
-	    if (listp pair)
-	    ;; print the attribute name in lowercase
-	    collect `(format ,str " ~(~a~)=\"~a\"" ,(car pair) ,(cadr pair))
-	    else if (stringp pair)
-	    collect `(format ,str " ~a" ,pair)
-	    else do (error "~s should be a list or a string" pair)))))
+       ,@(for:for ((pair in attributes-list)
+		   (result collecting
+			   (cond
+			     ((listp pair)
+			      ;; print the attribute name in lowercase
+			      `(format ,str " ~(~a~)=\"~a\"" ,(car pair) ,(cadr pair)))
+			     ((stringp pair) `(format ,str " ~a" ,pair))
+			     (t (error "~s should be a list or a string" pair)))))))))
 
 (defmacro generate-html ((stream &key (close-void t)) &rest statements)
   "Write html output to the stream. statements should be html statements or
@@ -59,26 +59,27 @@ should look."
   (if (not (null statements))
       (with-gensyms (element attributes element-string)
 	`(progn
-	   ,@(loop
-		for s in statements
-		if (not (null s))
-		if (html-statement-p s)
-		collect `(let* ((,element (first ',s))
-			       (,element-string (string-downcase ,element))
-			       (,attributes (create-attributes-string
-					     ,(second s))))
-			   (format ,stream "<~a~a~:[~; /~]>"
-				   ,element-string
-				   ,attributes
-				   (and ,close-void (void-element-p ,element)))
-			   (if (not (void-element-p ,element))
-			       (progn
-				 (generate-html (,stream
-						 :close-void ,close-void)
-						,@(cddr s))
-				 (format ,stream "</~a>" ,element-string))))
-		else collect `(if ,s (format ,stream "~a" ,s)
-				  (format ,stream "")))))))
+	   ,@(for:for ((s in statements)
+		       (result collecting
+			       (cond
+				 ((and (not (null s))
+				       (html-statement-p s))
+				  `(let* ((,element (first ',s))
+					  (,element-string (string-downcase ,element))
+					  (,attributes (create-attributes-string
+							,(second s))))
+				     (format ,stream "<~a~a~:[~; /~]>"
+					     ,element-string
+					     ,attributes
+					     (and ,close-void (void-element-p ,element)))
+				     (if (not (void-element-p ,element))
+					 (progn
+					   (generate-html (,stream
+							   :close-void ,close-void)
+							  ,@(cddr s))
+					   (format ,stream "</~a>" ,element-string)))))
+				 (t `(if ,s (format ,stream "~a" ,s)
+					 (format ,stream "")))))))))))
 
 (defmacro html (&rest statements)
   "Generate a string of the html.

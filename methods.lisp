@@ -117,7 +117,8 @@ specified."))
   (:documentation "Get the paragraphs, from the section, sorted according to the
 index."))
 (defmethod get-ordered-paragraphs ((s Section))
-  (sort (loop for p being the hash-values in (section-paragraphs s) collect p)
+  (sort (for:for (((key p) over (section-paragraphs s))
+		  (paragraphs collecting p)))
 	#'(lambda (p1 p2)
 	    (< (paragraph-index p1)
 	       (paragraph-index p2)))))
@@ -125,13 +126,12 @@ index."))
 (defmethod serialize-to-html ((s Section))
   (with-output-to-string (stream)
     (generate-xml
-     (stream)
-     (:section ()
-	       (loop
-		  for p in (get-ordered-paragraphs s)
-		  ;; the paragraphs already have html in the text
-		  ;; field
-		  do (format stream (paragraph-text p)))))))
+	(stream)
+	(:section ()
+		  (for:for ((p in (get-ordered-paragraphs s)))
+		    ;; the paragraphs already have html in the text
+		    ;; field
+		    (format stream (paragraph-text p)))))))
 
 (defgeneric manifest-to-html (Epub)
   (:documentation "Write the manifest to html and return a string."))
@@ -148,11 +148,10 @@ index."))
 (defmethod spine-to-html ((e Epub))
   (with-output-to-string (str)
     (generate-xml
-     (str)
-     (:spine ((:toc "ncx"))
-	     (loop
-		for itemref in (reverse (epub-spine e))
-		do (format str (serialize-to-html itemref)))))))
+	(str)
+	(:spine ((:toc "ncx"))
+		(for:for ((itemref in (reverse (epub-spine e))))
+		  (format str (serialize-to-html itemref)))))))
 
 (defgeneric write-package-document (Epub path)
   (:documentation "Write the package document to the path."))
@@ -192,7 +191,8 @@ index."))
 (defgeneric get-ordered-sections (Epub)
   (:documentation "Get the sections sorted by the index."))
 (defmethod get-ordered-sections ((e Epub))
-  (sort (loop for s being the hash-values in (epub-sections e) collect s)
+  (sort (for:for (((key s) over (epub-sections e))
+		  (sections collecting s)))
 	#'(lambda (s1 s2) (< (section-index s1)
 			     (section-index s2)))))
 
@@ -212,9 +212,8 @@ index."))
 		      (if css (format stream (xml (:link ((:rel "stylesheet")
 							  (:href css)))))))
 	       (:body ()
-		      (loop
-			for section in (get-ordered-sections e)
-			do (format stream (serialize-to-html section))))))))
+		      (for:for ((section in (get-ordered-sections e)))
+			(format stream (serialize-to-html section))))))))
 
 (defgeneric write-nav (Epub p &optional css)
   (:documentation "Write the navigation document to p"))
@@ -238,14 +237,13 @@ index."))
 	     ((:|epub:type| "toc") (:id "toc"))
 	     (:ol
 	      ()
-	      (loop
-		for section in sections
-		if (section-add-to-toc-p section)
-		  do (let ((title (section-title section)))
-		       (if (string= "" title)
-			   (error
-			    "A title of a section must not be the empty string.")
-			   (format stream (xml (:li () title))))))))))))))
+	      (for:for ((section in sections))
+		(when (section-add-to-toc-p section)
+		  (let ((title (section-title section)))
+		    (if (string= "" title)
+			(error
+			 "A title of a section must not be the empty string.")
+			(format stream (xml (:li () title)))))))))))))))
 
 (defgeneric write-epub (Epub path)
   (:documentation "Write the epub book to the folder pointed to by path. path

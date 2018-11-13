@@ -98,7 +98,8 @@ the EPUB standard optional. The package document file name should end in .opf."
 
 (defmacro metadata-expander-collector (&rest forms)
   `(progn
-     ,@(loop for f in forms collect `(metadata-expander ,@f))))
+     ,@(for:for ((f in forms)
+		 (result collecting `(metadata-expander ,@f))))))
 
 (defun create-metadata (identifier title language modified-timestamp
 			&key meta link contributor coverage creator date
@@ -161,14 +162,16 @@ return the manifest."
 			     (create-item "nav" "nav.xhtml"
 					  "application/xhtml+xml"
 					  :properties "nav")
-			     (loop for i in items do (format stream i))))))
+			     (for:for ((i in items))
+			       (format stream i))))))
 
 (defun create-spine (&rest itemrefs)
   "Create the spine element with the item references."
   (with-output-to-string (stream)
     (generate-xml (stream)
 		  (:spine ()
-			  (loop for i in itemrefs do (format stream i))))))
+			  (for:for ((i in itemrefs))
+			    (format stream i))))))
 
 (defun create-itemref (idref &key linear id properties)
   "Create an <itemref> tag. idref should, via idref, point to an <item> tag in
@@ -215,9 +218,8 @@ Else nil."
   (with-output-to-string (str)
     (generate-xml (str)
 		  (:section ((:id (format nil "s~a" (section-id s))))
-			    (loop
-			      for p in (section-paragraphs s)
-			      do (format str "~a" (paragraph-text p)))))))
+			    (for:for ((p in (section-paragraphs s)))
+			      (format str "~a" (paragraph-text p)))))))
 
 (defgeneric paragraph-text (Paragraph))
 (defmethod paragraph-text ((s string))
