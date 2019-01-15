@@ -170,16 +170,18 @@
   (not (null (for:object iterator))))
 
 (defmethod for:next ((iterator table-iterator))
-  (let* ((node (for:object iterator))
-	 (key (deque-node-value node))
-	 (value (table-get key (table iterator))))
-    (setf (for:object iterator)(deque-node-next node))
-    (list key value)))
+  (with-accessors ((node for:object)) iterator
+    (let* ((key (deque-node-value node))
+	   (table (table iterator))
+	   (value (table-get key table)))
+      (setf node (deque-node-next node))
+      (list key value))))
 
 (defmethod (setf for:current) (value (iterator table-iterator))
   (let* ((node (for:object iterator))
+	 (table (table iterator))
 	 (key (deque-node-value node)))
-    (setf (table-get key (table iterator)) value)))
+    (setf (table-get key table) value)))
 
 (defmethod for:make-iterator ((table linked-table) &key)
   (make-instance 'table-iterator :object (deque-first (lt-iter-seq table)) :table table))
